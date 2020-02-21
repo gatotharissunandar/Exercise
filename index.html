@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Blacklist</title>
+    <script src="jquery-3.3.1.js"></script>
+</head>
+
+<body>
+
+    <h2>Exercise 1</h2>
+    <p><strong>Mengetahui Daftar Hitam</strong></p>
+    <p>By: Gatot Haris Sunandar</p>
+    <label for="name">Nama : </label>
+    <input type="text" name="name" id="name"><br>
+    <label for="phone">Telepon : </label>
+    <input type="text" name="phone" id="phone" onKeyPress="return goodchars(event,'0123456789',this)"><br>
+    <button type="submit" id="check">Cek</button>
+
+</body>
+
+</html>
+
+<script>
+    $("#check").click(function () {
+        name = $("#name").val();
+        phone = $("#phone").val();
+        $.ajax({
+            url: 'api.php',
+            type: 'post',
+            data: {
+                name: name,
+                phone: phone
+            },
+            success: function (response) {
+                if (response == true) {
+                    alert('Nama atau nomor telepon yang di input berada dalam daftar hitam');
+                } else {
+                    alert('Nama atau nomor telepon tidak ada dalam daftar hitam');
+                }
+            }
+        });
+    });
+
+    function getkey(e) {
+        if (window.event)
+            return window.event.keyCode;
+        else if (e)
+            return e.which;
+        else
+            return null;
+    }
+
+    function goodchars(e, goods, field) {
+        var key, keychar;
+        key = getkey(e);
+        if (key == null) return true;
+
+        keychar = String.fromCharCode(key);
+        keychar = keychar.toLowerCase();
+        goods = goods.toLowerCase();
+
+        // check goodkeys
+        if (goods.indexOf(keychar) != -1)
+            return true;
+        // control keys
+        if (key == null || key == 0 || key == 8 || key == 9 || key == 27)
+            return true;
+
+        if (key == 13) {
+            var i;
+            for (i = 0; i < field.form.elements.length; i++)
+                if (field == field.form.elements[i])
+                    break;
+            i = (i + 1) % field.form.elements.length;
+            field.form.elements[i].focus();
+            return false;
+        };
+        // else return false
+        return false;
+    }
+</script>
